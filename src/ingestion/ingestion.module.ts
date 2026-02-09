@@ -4,6 +4,8 @@ import { VehicleTelemetryHistory } from '../database/entities/vehicle-telemetry-
 import { MeterTelemetryHistory } from '../database/entities/meter-telemetry-history.entity';
 import { VehicleLiveStatus } from '../database/entities/vehicle-live-status.entity';
 import { MeterLiveStatus } from '../database/entities/meter-live-status.entity';
+import { IngestionService } from './ingestion.service';
+import { IngestionController } from './ingestion.controller';
 
 @Module({
   imports: [
@@ -14,5 +16,8 @@ import { MeterLiveStatus } from '../database/entities/meter-live-status.entity';
       MeterLiveStatus,
     ]),
   ],
+  providers: [IngestionService],
+  controllers: [IngestionController],
+  exports: [IngestionService],
 })
 export class IngestionModule {}

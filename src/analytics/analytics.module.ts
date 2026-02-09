@@ -4,6 +4,8 @@ import { VehicleTelemetryHistory } from '../database/entities/vehicle-telemetry-
 import { MeterTelemetryHistory } from '../database/entities/meter-telemetry-history.entity';
 import { VehicleLiveStatus } from '../database/entities/vehicle-live-status.entity';
 import { MeterLiveStatus } from '../database/entities/meter-live-status.entity';
+import { AnalyticsService } from './analytics.service';
+import { AnalyticsController } from './analytics.controller';
 
 @Module({
   imports: [
@@ -14,5 +16,7 @@ import { MeterLiveStatus } from '../database/entities/meter-live-status.entity';
       MeterLiveStatus,
     ]),
   ],
+  providers: [AnalyticsService],
+  controllers: [AnalyticsController],
 })
 export class AnalyticsModule {}

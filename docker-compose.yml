@@ -9,4 +9,46 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: energy_db
     ports:
-      - "5432:5432"
+      - "5432:5432"    
+    volumes:
+      # Persist database data
+      - postgres_data:/var/lib/postgresql/data
+      # Optional: Initialize database with schema
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - energy_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: energy_ingestion_app
+    environment:
+      NODE_ENV: development
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: energy_db
+      DB_LOGGING: 'false'
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - energy_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  energy_network:
+    driver: bridge

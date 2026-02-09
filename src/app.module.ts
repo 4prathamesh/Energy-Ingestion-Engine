@@ -1,19 +1,25 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { IngestionModule } from './ingestion/ingestion.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'energy_db',
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      username: process.env.DB_USERNAME || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      database: process.env.DB_NAME || 'energy_db',
       autoLoadEntities: true,
-      synchronize: true, // OK for assignment
+      synchronize: process.env.NODE_ENV !== 'production', // OK for development
+      logging: process.env.DB_LOGGING === 'true',
     }),
     AnalyticsModule,
     IngestionModule,
